@@ -1,0 +1,87 @@
+import numpy as np
+# Hidden machine states
+states = ["Healthy", "Warning", "Failure"]
+# Observation combinations
+observations = [
+    "Normal",
+    "Slightly_High",
+    "High"
+]
+# Transition probabilities
+# Rows: current state
+# Columns: next state
+transition = np.array([
+    [0.80, 0.15, 0.05],  # Healthy
+    [0.20, 0.60, 0.20],  # Warning
+    [0.05, 0.15, 0.80]   # Failure
+])
+# Emission probabilities
+# Rows: hidden state
+# Columns: observation
+emission = np.array([
+    [0.80, 0.15, 0.05],  # Healthy
+    [0.20, 0.60, 0.20],  # Warning
+    [0.05, 0.20, 0.75]   # Failure
+])
+# Initial state probabilities
+initial = np.array([0.70, 0.20, 0.10])
+# Sensor observation sequence
+# 0 = Normal
+# 1 = Slightly_High
+# 2 = High
+sensor_observations = [0, 1, 2, 2, 1]
+# Number of states and observations
+n_states = len(states)
+n_observations = len(sensor_observations)
+# Viterbi probability table
+prob = np.zeros((n_states, n_observations))
+# Path table
+path = np.zeros((n_states, n_observations), dtype=int)
+# First observation
+prob[:, 0] = (
+    initial *
+    emission[:, sensor_observations[0]]
+)
+# Viterbi algorithm
+for t in range(1, n_observations):
+    for current_state in range(n_states):
+        values = (
+            prob[:, t - 1] *
+            transition[:, current_state]
+        )
+        path[current_state, t] = np.argmax(values)
+        prob[current_state, t] = (
+            np.max(values) *
+            emission[
+                current_state,
+                sensor_observations[t]
+            ]
+        )
+# Find final most probable state
+best_state = np.argmax(prob[:, -1])
+# Backtracking
+hidden_states = [best_state]
+for t in range(n_observations - 1, 0, -1):
+    best_state = path[best_state, t]
+    hidden_states.append(best_state)
+hidden_states.reverse()
+# Display results
+print("Y.sreenadh 192525166")
+print("PREDICTIVE MACHINE MAINTENANCE USING HMM")
+print("------------------------------------------")
+print("\nHidden States:")
+print(states)
+print("\nSensor Observations:")
+print([
+    observations[i]
+    for i in sensor_observations
+])
+print("\nPredicted Hidden Machine States:")
+for i in range(n_observations):
+    print(
+        observations[sensor_observations[i]],
+        "->",
+        states[hidden_states[i]]
+    )
+print("\nFinal Predicted Machine State:")
+print(states[hidden_states[-1]])
