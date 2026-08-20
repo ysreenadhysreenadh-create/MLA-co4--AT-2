@@ -1,0 +1,64 @@
+ import numpy as np
+train_sentences = [
+    ["John", "ordered", "iPhone", "ID123"],
+    ["Sarah", "bought", "Laptop", "ID456"],
+    ["Mike", "ordered", "Headphones", "ID789"],
+    ["David", "bought", "Tablet", "ID321"]
+]
+train_labels = [
+    ["CUSTOMER", "O", "PRODUCT", "ORDER"],
+    ["CUSTOMER", "O", "PRODUCT", "ORDER"],
+    ["CUSTOMER", "O", "PRODUCT", "ORDER"],
+    ["CUSTOMER", "O", "PRODUCT", "ORDER"]
+]
+def get_features(word):
+    return {
+        "lower": word.lower(),
+        "title": word.istitle(),
+        "digit": word.isdigit(),
+        "has_digit": any(c.isdigit() for c in word)
+    }
+model = {}
+print("y.Sreenadh 192525166")
+for sentence, labels in zip(train_sentences, train_labels):
+    for word, label in zip(sentence, labels):
+        features = get_features(word)
+        key = features["lower"]
+        if key not in model:
+            model[key] = label
+test_sentence = [
+    "John", "ordered", "Laptop", "ID999"
+]
+predicted_labels = []
+for word in test_sentence:
+    key = word.lower()
+    if key in model:
+        label = model[key]
+    elif word.startswith("ID") and any(c.isdigit() for c in word):
+        label = "ORDER"
+    elif word.istitle():
+        label = "CUSTOMER"
+    elif key in ["iphone", "laptop", "headphones", "tablet"]:
+        label = "PRODUCT"
+    else:
+        label = "O"
+    predicted_labels.append(label)
+print("Customer Support Email:")
+print(" ".join(test_sentence))
+print("\nPredicted Entity Labels:")
+for word, label in zip(test_sentence, predicted_labels):
+    print(word, "->", label)
+correct = 0
+total = 0
+for sentence, labels in zip(train_sentences, train_labels):
+    for word, actual in zip(sentence, labels):
+        if word.lower() in model:
+            predicted = model[word.lower()]
+        else:
+            predicted = "O"
+        if predicted == actual:
+            correct += 1
+        total += 1
+accuracy = correct / total
+print("\nModel Evaluation:")
+print("Accuracy:", round(accuracy * 100, 2), "%")
