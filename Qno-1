@@ -1,0 +1,85 @@
+# Fraud Detection Using Bayesian Network
+# -----------------------------
+# 1. Define Conditional Probability Tables
+# -----------------------------
+# P(Transaction Amount)
+P_Amount = {
+    "Low": 0.60,
+    "High": 0.40
+}
+# P(Transaction Location)
+P_Location = {
+    "Normal": 0.70,
+    "Unusual": 0.30
+}
+# P(Customer Login Device)
+P_Device = {
+    "Known": 0.75,
+    "Unknown": 0.25
+}
+# P(Previous Fraud History)
+P_History = {
+    "No": 0.80,
+    "Yes": 0.20
+}
+# P(Fraud | Amount, Location, Device, History)
+P_Fraud = {
+    ("Low", "Normal", "Known", "No"): 0.01,
+    ("Low", "Normal", "Known", "Yes"): 0.30,
+    ("Low", "Normal", "Unknown", "No"): 0.10,
+    ("Low", "Normal", "Unknown", "Yes"): 0.50,
+    ("Low", "Unusual", "Known", "No"): 0.15,
+    ("Low", "Unusual", "Known", "Yes"): 0.60,
+    ("Low", "Unusual", "Unknown", "No"): 0.40,
+    ("Low", "Unusual", "Unknown", "Yes"): 0.80,
+    ("High", "Normal", "Known", "No"): 0.05,
+    ("High", "Normal", "Known", "Yes"): 0.50,
+    ("High", "Normal", "Unknown", "No"): 0.30,
+    ("High", "Normal", "Unknown", "Yes"): 0.70,
+    ("High", "Unusual", "Known", "No"): 0.40,
+    ("High", "Unusual", "Known", "Yes"): 0.80,
+    ("High", "Unusual", "Unknown", "No"): 0.70,
+    ("High", "Unusual", "Unknown", "Yes"): 0.95
+}
+# -----------------------------
+# 2. Display Bayesian Network
+# -----------------------------
+print("Y.sreenadh 192525166")
+print("BAYESIAN NETWORK FOR FRAUD DETECTION")
+print("--------------------------------------")
+print("\nNetwork Structure:")
+print("Transaction Amount  ---->")
+print("Transaction Location ---->")
+print("Login Device ---------> Fraudulent")
+print("Previous Fraud History ->")
+# -----------------------------
+# 3. Given Customer Transaction
+# -----------------------------
+
+amount = "High"
+location = "Unusual"
+device = "Unknown"
+history = "Yes"
+print("\nGiven Transaction:")
+print("Transaction Amount   :", amount)
+print("Transaction Location:", location)
+print("Login Device        :", device)
+print("Previous Fraud      :", history)
+# -----------------------------
+# 4. Probabilistic Inference
+# -----------------------------
+probability = P_Fraud[
+    (amount, location, device, history)
+]
+# -----------------------------
+# 5. Display Prediction
+# -----------------------------
+print("\nPrediction Result:")
+print("Probability of Fraud:",
+      probability)
+print("Fraud Probability (%):",
+      probability * 100, "%")
+if probability >= 0.50:
+    print("Prediction: FRAUDULENT TRANSACTION")
+else:
+    print("Prediction: LEGITIMATE TRANSACTION")
